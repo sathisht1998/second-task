@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Display</title>
+    <style>
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Data Display</h2>
+    <form id="dataForm">
+        <label for="id">Enter ID:</label>
+        <input type="text" id="id" name="id" placeholder="Enter ID" />
+        <button type="button" onclick="displayData()">Get Information</button>
+    </form>
+    <table id="dataTable" style="display: none">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>bio</th>
+                <th>address</th>
+                <th>Aid</th>
+
+            </tr>
+        </thead>
+        <tbody id="dataBody">
+            // Data rows will be dynamically added here
+        </tbody>
+    </table>
+    <script>
+        function displayData() {
+            const inputId = document.getElementById("id").value;
+            const usersXhr = new XMLHttpRequest();
+            const combinedXhr = new XMLHttpRequest();
+            combinedXhr.open("GET", "user_prod_details.json", true);
+            combinedXhr.onreadystatechange = function () {
+
+                if (combinedXhr.readyState === 4 && combinedXhr.status === 200) {
+                    const combinedData = JSON.parse(combinedXhr.responseText);
+                    const selectAddressData = combinedData.find(data => data.id === inputId);
+                }
+            };
+            combinedXhr.send();
+            usersXhr.open("GET", "users.json", true);
+            usersXhr.onreadystatechange = function () {
+                if (usersXhr.readyState === 4 && usersXhr.status === 200) {
+                    const usersData = JSON.parse(usersXhr.responseText);
+                    const userData = usersData.find(user => user.id === parseInt(inputId, 10));
+                    if (!userData) {
+                        console.error("User not found.");
+                        alert("User not found. Please try again.");
+                        return;
+                    }
+
+                    const productsXhr = new XMLHttpRequest();
+                    productsXhr.open("GET", "products.json", true);
+                    productsXhr.onreadystatechange = function () {
+                        if (productsXhr.readyState === 4 && productsXhr.status === 200) {
+                            const productsData = JSON.parse(productsXhr.responseText);
+                            const productData = productsData.find(address => address.Aid === userData.Aid);
+                            if (!productData) {
+                                console.error("Product not found.");
+                                alert("Product not found. Please try again.");
+                                return;
+                            }
+                        }
+                    };
+                    productsXhr.send();
+                }
+            };
+            usersXhr.send();
+        }
+
+        function renderData(userData, addressData) {
+            const dataTable = document.getElementById("dataTable");
+            const dataBody = document.getElementById("dataBody");
+            dataBody.innerHTML = "";
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+        <td>${userData.id}</td>
+        <td>${userData.name}</td>
+        <td>${userData.mobilenumber}</td>
+        <td>${userData.bio}</td>
+        <td>${addressData.Aid}</td>
+        <td>${addressData.address}</td>
+    `;
+            dataBody.appendChild(row);
+            dataTable.style.display = "block";
+        }
+    </script>
+</body>
+
+</html>

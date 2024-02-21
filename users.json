@@ -1,0 +1,15 @@
+[
+    {
+        "id": 10,
+        "mobileNumber": 1234567,
+        "age": 30,
+        "bio": "something about me"
+
+    },
+    {
+        "id": 11,
+        "mobileNumber": 234567,
+        "age": 45,
+        "bio": "something about second person"
+    }
+]
