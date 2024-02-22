@@ -22,15 +22,15 @@
 
         button {
             padding: 10px 20px;
-            background-color: #4caf50;
-            color: white;
+            background-color: #091cf3;
+            color: rgb(255, 255, 255);
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #091cf3;
         }
 
         table {
@@ -54,19 +54,22 @@
 <body>
     <h2>Data Display</h2>
     <form id="dataForm">
-        <label for="id">Enter ID:</label>
-        <input type="text" id="id" name="id" placeholder="Enter ID" />
+        <label for="name">Enter username</label>
+        <input type="text" id="name" name ="name" placeholder="Enter ID" />
         <button type="button" onclick="displayData()">Get Information</button>
+        <button type="button" onclick="displayDatas()"> User Address</button>
     </form>
     <table id="dataTable" style="display: none">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Age</th>
-                <th>bio</th>
+                <th>number</th>
                 <th>address</th>
                 <th>Aid</th>
+                <th>emp.id</th>
+                <th>emp.name</th>
+                <th>emp.address</th>
 
             </tr>
         </thead>
@@ -74,71 +77,8 @@
             // Data rows will be dynamically added here
         </tbody>
     </table>
-    <script>
-        function displayData() {
-            const inputId = document.getElementById("id").value;
-            const usersXhr = new XMLHttpRequest();
-
-            usersXhr.open("GET", "users.json", true);
-            usersXhr.onreadystatechange = function () {
-                if (usersXhr.readyState === 4 && usersXhr.status === 200) {
-                    const usersData = JSON.parse(usersXhr.responseText);
-                    const userData = usersData.find(user => user.id === parseInt(inputId, 10));
-                    if (!userData) {
-                        console.error("User not found.");
-                        alert("User not found. Please try again.");
-                        return;
-                    }
-
-                    const productsXhr = new XMLHttpRequest();
-                    productsXhr.open("GET", "products.json", true);
-                    productsXhr.onreadystatechange = function () {
-                        if (productsXhr.readyState === 4 && productsXhr.status === 200) {
-                            const combinedXhr = new XMLHttpRequest();
-                            combinedXhr.open("GET", "user_prod_details.json", true);
-                            combinedXhr.onreadystatechange = function () {
-
-                                if (combinedXhr.readyState === 4 && combinedXhr.status === 200) {
-                                    const combinedData = JSON.parse(combinedXhr.responseText);
-                                    const selectAddressData = combinedData.find(data => data.id == inputId);
-                                    const productsData = JSON.parse(productsXhr.responseText);
-                                    const productData = productsData.find(address => address.Aid === selectAddressData.AID);
-                                    if (!productData) {
-                                        console.error("Product not found.");
-                                        alert("Product not found. Please try again.");
-                                        return;
-                                    }else {
-                                        renderData(userData,productData);
-                                    }
-                                }
-                            };
-                            combinedXhr.send();
-
-                        }
-                    };
-                    productsXhr.send();
-                }
-            };
-            usersXhr.send();
-        }
-
-        function renderData(userData, addressData) {
-            const dataTable = document.getElementById("dataTable");
-            const dataBody = document.getElementById("dataBody");
-            dataBody.innerHTML = "";
-
-            const row = document.createElement("tr");
-            row.innerHTML = `
-        <td>${userData.id}</td>
-        <td>${userData.mobileNumber}</td>
-        <td>${userData.bio}</td>
-        <td>${addressData.Aid}</td>
-        <td>${addressData.address}</td>
-    `;
-            dataBody.appendChild(row);
-            dataTable.style.display = "block";
-        }
-    </script>
+    <script src="script.js"> </script>
+    
 </body>
 
 </html>
